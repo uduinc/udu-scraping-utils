@@ -24,7 +24,7 @@ const scrapingUtils = {
 		});
 
 		return uri;
-	};
+	},
 	getDomain: function getDomain (url, uriObj) {
 		const secondLevelExtensions = ["com","net","co","gov","edu","org","mil","io","biz","go","hub","business","weebly","squarespace","blogspot","yolasite","wordpress","wixsite","wix","vpweb","ueniweb","webs","tripod","negocio","godaddysites","homestead","jimdo","us"];
 
@@ -56,7 +56,7 @@ const scrapingUtils = {
 		}
 
 		return domain.toLowerCase();
-	};
+	}
 };
 
 exports = module.exports = scrapingUtils;
