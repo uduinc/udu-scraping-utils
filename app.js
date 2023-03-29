@@ -43,6 +43,9 @@ const scrapingUtils = {
 		if (domain[domain.length-1] == "/") {
 			domain = domain.substr(0,domain.length-1);
 		}
+		if (domain.match(/[,~:;!@#$%^&'(){}_#+=<>\\\/\s]/)) {
+			domain = "";
+		}
 		if (domain) {
 			let domainParts = domain.split(".");
 			if (domainParts.length > 2) {
