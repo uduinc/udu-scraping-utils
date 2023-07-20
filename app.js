@@ -22,6 +22,18 @@ const scrapingUtils = {
 		uri[o.key[12]].replace(o.q.parser, function ($0, $1, $2) {
 			if ($1) uri[o.q.name][$1] = $2;
 		});
+		if (!uri.protocol && uri.user) { //handle parser not recognizing stuff like mailto: as the protocol properly
+			uri.protocol = uri.user;
+			uri.user = "";
+		}
+		if (!uri.host.includes(".")) { //handle parser not handling @s in urls appropriately (a proper url host should have a . in there somewhere)
+			if (uri.user.includes(".")) { //usually there's a "user" assigned to do the @
+				uri.host = uri.user;
+			}
+			else {
+				uri.host = "";
+			}
+		}
 
 		return uri;
 	},
