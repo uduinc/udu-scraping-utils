@@ -93,15 +93,6 @@ const scrapingUtils = {
 			};
 		}
 
-		for (let i=0; i<card.urlsFromCards.length; i++) {
-			let link = card.urlsFromCards[i];
-			if (link && (link.indexOf("tel:") == 0 || link.indexOf("callto:") == 0)) {
-				telLinkNumbers.push(link.replace(/%20/g,"").replace(/\D/g, '').replace(/^00/,"")); //replace encoded spaces, non-numbers, AND potential starting 00 (used in place of a +)
-				card.urlsFromCards.splice(i,1);
-				i--;
-			}
-		}
-
 		let text = card.element.fullText;
 		let phoneRegex;
 		switch(country_code) { //Note: / is included in austria/germany/switzerland as it seems to be a bit of a germanic thing to separate area code with it. Not in others due to potential date false positives (length restrictions on those 3 should be fine)
@@ -192,6 +183,20 @@ const scrapingUtils = {
 				break;
 			}
 		}
+
+		for (let i=0; i<card.urlsFromCards.length; i++) {
+			let link = card.urlsFromCards[i];
+			if (link && (link.indexOf("tel:") == 0 || link.indexOf("callto:") == 0)) {
+				let numberFromLink = link.replace(/%20/g,"").replace(/\D/g, '').replace(/^00/,""); //replace encoded spaces, non-numbers, AND potential starting 00 (used in place of a +)
+				let passed = numberFromLink.match(phoneRegex);
+				if (passed) {
+					telLinkNumbers.push(passed[0]); //should not be multiple matches due to stripping out all non-digits 
+					card.urlsFromCards.splice(i,1);
+					i--;
+				}
+			}
+		}
+
 		let phoneMatches = text.match(phoneRegex);
 		if (!phoneMatches) {
 			phoneMatches = [];
@@ -432,7 +437,17 @@ const scrapingUtils = {
 						}
 						break;
 					}
-					//usa and can format is strict so dont need another check here
+					case "can": //usa and can format is strict, but we want to filter out country code (leading 1) and fictional numbers (555 area code)
+					case "usa":
+					default: {
+						if (number.length == 11) {
+							number = number.replace(/^1/,"");
+						}
+						if (number.startsWith("555")) {
+							passed = false;
+						}
+						break;
+					}
 				}
 				if (passed) {
 					addPhoneNumber( number );
