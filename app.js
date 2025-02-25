@@ -196,7 +196,7 @@ const scrapingUtils = {
 		if (!phoneMatches) {
 			phoneMatches = [];
 		}
-		phoneMatches.concat(telLinkNumbers);
+		phoneMatches = phoneMatches.concat(telLinkNumbers);
 		if ( phoneMatches.length ) {
 			for (let i=0; i<phoneMatches.length; i++) {
 				let passed = true;
